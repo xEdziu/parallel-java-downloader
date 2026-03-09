@@ -11,8 +11,8 @@ The task was to implement a file downloader which has the ability to download ch
    ```bash
    docker run --rm -p 8080:80 -v /path/to/your/local/directory:/usr/local/apache2/htdocs/ httpd:latest
    ```
-    > [!NOTE] 
-   > Replace `/path/to/your/local/directory` with the actual path to the directory containing the file you want to download.
+> [!NOTE] 
+> Replace `/path/to/your/local/directory` with the actual path to the directory containing the file you want to download.
 3. Update the `url` variable in the `Main` class to point to the file you want to download. For example:
    ```java
    String url = "http://localhost:8080/yourfile.ext";
