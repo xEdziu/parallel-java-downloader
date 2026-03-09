@@ -8,16 +8,15 @@ public class Main {
 
     public static void main(String[] args) {
 
-        System.out.println("Starting Downloader");
+        System.out.println("Starting job");
         ParallelFileDownloader parallelFileDownloader = new ParallelFileDownloader(
                 ParallelFileDownloader.createDefaultHttpClient()
         );
-        System.out.println("Downloading files...");
         try {
             parallelFileDownloader.downloadFile(DOWNLOAD_URL, TARGET_DIR, NUMBER_OF_CHUNKS);
         } catch (Exception e) {
             System.out.println("Error downloading file: " + e.getMessage());
         }
-        System.out.println("Finished Downloader");
+        System.out.println("Finished job");
     }
 }

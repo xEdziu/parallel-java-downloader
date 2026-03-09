@@ -2,7 +2,10 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.channels.FileChannel;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
@@ -90,7 +93,34 @@ public class ParallelFileDownloader {
 
         allFutures.join();
 
-        System.out.println("All chunks downloaded.");
+        System.out.println("All chunks downloaded - Beginning merging files.");
+
+        // Open a channel to destination file by creating a new file or overwriting already existing one
+        try (FileChannel dstChannel = FileChannel.open(
+                destination,
+                StandardOpenOption.CREATE,
+                StandardOpenOption.WRITE)) {
+
+            long currentPosition = 0;
+            for (Path tempFile : tempFiles) {
+                // open a channel to read from tmp file
+                try (FileChannel srcChannel = FileChannel.open(tempFile, StandardOpenOption.READ)) {
+                    long size = srcChannel.size();
+                    long transferred = 0;
+
+                    // use transferFrom for zero-copy (omit JVM memory)
+                    while (transferred < size) {
+                        long count = dstChannel.transferFrom(srcChannel, currentPosition, size - transferred);
+                        transferred += count;
+                        currentPosition += count;
+                    }
+                }
+                // Cleanup - delete temporary file after transfer
+                Files.delete(tempFile);
+            }
+        }
+        System.out.println("Finished merging files. Fully rewritten file has been saved to: "
+                + destination.toAbsolutePath());
     }
 
     //Support method responsible for mathematical slicing the file
