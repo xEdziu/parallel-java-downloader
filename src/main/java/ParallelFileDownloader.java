@@ -72,5 +72,5 @@ public class ParallelFileDownloader {
     }
 
     //Support class containing metadata of single chunk
-    record ChunkInfo(long startByte, long endByte, int index) { };
+    record ChunkInfo(long startByte, long endByte, int index) { }
 }
